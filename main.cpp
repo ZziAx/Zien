@@ -6,9 +6,10 @@ int main()
 {
 
   std::string s = "hello world!";
+  std::string fontPath = "font.ttf";
 
   ZN_TextRenderer text_renderer = ZN_TextRenderer();
-  text_renderer.render_text(s, std::string("/Users/bitels/Desktop/Ffonts/YekanBakh 3 ProPlus [@fontiranir]/Yekan Bakh Family/ttf/YekanBakh-Regular.ttf"));
+  text_renderer.render_text(s, fontPath);
   text_renderer.save_png();
   return 0;
 }
