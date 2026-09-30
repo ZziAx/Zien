@@ -6,7 +6,7 @@
 
 * Load a font from a `.ttf`/font file
 * Render text to a bitmap
-* Render text to SVG
+* Render text to SVG(Experimental)
 * Optional text width for line wrapping
 * Get rendered image size
 * Access RGBA pixel data
