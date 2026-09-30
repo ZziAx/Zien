@@ -1,0 +1,13 @@
+[package]
+name = "zien_ext_rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+resvg = "0.45.1"
+unicode-bidi = "0.3.18"
+
+[lib]
+name = "zien_ext_rs"
+crate-type = ["dylib"] 
+

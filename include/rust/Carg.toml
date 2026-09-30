@@ -1,0 +1,19 @@
+[package]
+name = "zien_ext_rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+resvg = {version="0.45.1",default-features = false}
+unicode-bidi = "0.3.18"
+
+[lib]
+name = "zien_ext_rs"
+crate-type = ["cdylib"] 
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"      # reduces panic handling overhead
+strip = true   

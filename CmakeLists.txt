@@ -1,0 +1,81 @@
+cmake_minimum_required(VERSION 3.10)
+project(zien)
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)  # Or 11, 14, 20 depending on your needs
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)  # Disable compiler-specific extensions
+
+
+
+# debug
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
+
+option(ZN_TINYXML_IMPLEMENTATION "Enable TinyXML2 support for SVG/SVGB processing")
+
+set(ZN_TINYXML_IMPLEMENTATION ON)
+
+file(GLOB HEADERS 
+"${CMAKE_SOURCE_DIR}/include"
+"${CMAKE_SOURCE_DIR}/include/extra"
+"${CMAKE_SOURCE_DIR}/include/ext"
+"${CMAKE_SOURCE_DIR}/include/font"
+"${CMAKE_SOURCE_DIR}/include/text_painters"
+"${CMAKE_SOURCE_DIR}/external/utfcpp"
+)
+
+include_directories(
+       ${HEADERS}
+)
+
+add_subdirectory(external/freetype)
+add_subdirectory(external/harfbuzz)
+
+if(ZN_TINYXML_IMPLEMENTATION) 
+    message(STATUS "TinyXML2 support enabled")
+include_directories(
+    "${CMAKE_SOURCE_DIR}/external/tinyxml2"
+)
+        # add_subdirectory(external/tinyxml2)
+        add_compile_definitions(ZN_TINYXML_IMPLEMENTATION)
+    else()
+        message(STATUS "TinyXML2 support disabled")
+    endif()
+
+
+# add_custom_command(
+#     OUTPUT ${CMAKE_SOURCE_DIR}/rust/target/release/libzien_ext_rs.dylib
+#     COMMAND cargo build --release
+#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/include/rust
+# )
+
+
+
+
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/rust/target/release/libzien_ext_rs.dylib
+    COMMAND ${CMAKE_COMMAND} -E env CARGO_TARGET_DIR=${CMAKE_SOURCE_DIR}/rust/target cargo build --release
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/include/rust
+    COMMENT "Building Rust library Bidi, Svg painter"
+)
+
+
+add_custom_target(zien_rs ALL
+    DEPENDS ${CMAKE_SOURCE_DIR}/rust/target/release/libzien_ext_rs.dylib
+)
+
+
+
+add_executable(${PROJECT_NAME} main.cpp "external/tinyxml2/tinyxml2.cpp")
+
+target_link_libraries(${PROJECT_NAME} freetype harfbuzz)
+
+target_link_libraries(${PROJECT_NAME} 
+    "${CMAKE_SOURCE_DIR}/rust/target/release/libzien_ext_rs.dylib"
+)
+
+# add_dependencies(${PROJECT_NAME} zien_rs)
+
+add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
